@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
+import com.excilys.model.ComputerColumnSorter;
 
 public class DBComputerDAO implements ComputerDAO {
 
@@ -23,7 +24,12 @@ public class DBComputerDAO implements ComputerDAO {
 	private static final String INSERT_SQL = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (computer_seq.nextval, ?, ?, ?, ?)";
 	private static final String UPDATE_SQL = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String DELETE_SQL = "DELETE FROM computer WHERE id = ?";
+	private static final String ORDER = "ORDER BY UPPER(%1$s) %2$s ";
 
+	private String getOrderBy(ComputerColumnSorter sorter) {
+		return String.format(ORDER, sorter.getColumnName(), sorter.getOrderBy());
+	}
+	
 	private Computer extractComputer(ResultSet res) throws SQLException {
 		Computer c = new Computer();
 		c.setId(res.getInt("c_id"));
@@ -121,12 +127,13 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public List<Computer> getComputers(int page) {
+	public List<Computer> getComputers(int page, ComputerColumnSorter sorter) {
 		Connection conn = DataBaseUtil.getConnection();
 		if (conn == null)
 			return null;
 		try {
 			StringBuilder sb = new StringBuilder(BASE_SQL);
+			sb.append(getOrderBy(sorter));
 			sb.append(LIMIT);
 			PreparedStatement stmt = conn.prepareStatement(sb.toString());
 			stmt.setInt(1, page * NB_PER_PAGE);
@@ -177,13 +184,14 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public List<Computer> getComputers(String filtre) {
+	public List<Computer> getComputers(String filtre, ComputerColumnSorter sorter) {
 		Connection conn = DataBaseUtil.getConnection();
 		if (conn == null)
 			return null;
 		try {
 			StringBuilder sb = new StringBuilder(BASE_SQL);
 			sb.append(WHERE_FILTER);
+			sb.append(getOrderBy(sorter));
 			PreparedStatement stmt = conn.prepareStatement(sb.toString());
 			stmt.setString(1, String.format("%%%s%%", filtre));
 			ResultSet res = stmt.executeQuery();
@@ -206,13 +214,14 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public List<Computer> getComputers(String filtre, int page) {
+	public List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) {
 		Connection conn = DataBaseUtil.getConnection();
 		if (conn == null)
 			return null;
 		try {
 			StringBuilder sb = new StringBuilder(BASE_SQL);
 			sb.append(WHERE_FILTER);
+			sb.append(getOrderBy(sorter));
 			sb.append(LIMIT);
 			PreparedStatement stmt = conn.prepareStatement(sb.toString());
 			stmt.setString(1, String.format("%%%s%%", filtre));

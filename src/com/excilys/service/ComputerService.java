@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
+import com.excilys.model.ComputerColumnSorter;
 
 public interface ComputerService {
 	
@@ -15,11 +16,11 @@ public interface ComputerService {
 	
 	int getComputersCount();
 	
-	List<Computer> getComputers(int page);
+	List<Computer> getComputers(int page, ComputerColumnSorter sorter);
 	
 	int getComputersCount(String filtre);
 	
-	List<Computer> getComputers(String filtre, int page);
+	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
 	
 	void saveOrUpdate(Computer computer);
 	

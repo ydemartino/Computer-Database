@@ -8,6 +8,7 @@ import com.excilys.dao.DBCompanyDAO;
 import com.excilys.dao.DBComputerDAO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
+import com.excilys.model.ComputerColumnSorter;
 
 public class ComputerServiceImpl implements ComputerService {
 	
@@ -40,8 +41,8 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	public List<Computer> getComputers(int page) {
-		return computerDAO.getComputers(page);
+	public List<Computer> getComputers(int page, ComputerColumnSorter sorter) {
+		return computerDAO.getComputers(page, sorter);
 	}
 
 	@Override
@@ -50,8 +51,8 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	public List<Computer> getComputers(String filtre, int page) {
-		return computerDAO.getComputers(filtre, page);
+	public List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) {
+		return computerDAO.getComputers(filtre, page, sorter);
 	}
 
 	@Override

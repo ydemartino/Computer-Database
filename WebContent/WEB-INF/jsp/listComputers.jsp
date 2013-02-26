@@ -22,6 +22,9 @@
 			.format("&filter=%s", request.getParameter("filter")) : "";
 	boolean isLastPage = (numPage + 1) * nbPerPage > total;
 %>
+<c:if test="${!empty param.filter}">
+	<c:set var="extraParam" value="&filter=${param.filter}" />
+</c:if>
 <body>
 	<header class="topbar">
 		<h1 class="fill">
@@ -31,15 +34,13 @@
 	</header>
 
 	<section id="main">
-		<h1><%=total%>
-			computers found
-		</h1>
+		<h1>${total} computers found</h1>
 
 		<div id="actions">
 			<form action="" method="GET">
-				<input type="search" id="searchbox" name="filter" value="${param.filter}"
-					placeholder="Filter by computer name..."> <input
-					type="submit" id="searchsubmit" value="Filter by name"
+				<input type="search" id="searchbox" name="filter"
+					value="${param.filter}" placeholder="Filter by computer name...">
+				<input type="submit" id="searchsubmit" value="Filter by name"
 					class="btn primary">
 			</form>
 
@@ -50,38 +51,43 @@
 		<table class="computers zebra-striped">
 			<thead>
 				<tr>
-					<th class="col2 header headerSortUp"><a href="http://localhost:9000/computers?s=-2">Computer
+					<th
+						class="col2 header<c:if test="${sorter.isCurrent(1)}"> headerSort<c:choose><c:when test="${sorter.isReverse(1)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
+						href="<c:url value="ComputerServlet?sort=${sorter.getSort(1)}${extraParam}"/>">Computer
 							name</a></th>
-					<th class="col3 header "><a href="http://localhost:9000/computers?s=3">Introduced</a>
-					</th>
-					<th class="col4 header "><a href="http://localhost:9000/computers?s=4">Discontinued</a>
-					</th>
-					<th class="col5 header "><a href="http://localhost:9000/computers?s=5">Company</a>
-					</th>
+					<th
+						class="col3 header<c:if test="${sorter.isCurrent(2)}"> headerSort<c:choose><c:when test="${sorter.isReverse(2)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
+						href="<c:url value="ComputerServlet?sort=${sorter.getSort(2)}${extraParam}"/>">Introduced</a></th>
+					<th
+						class="col4 header<c:if test="${sorter.isCurrent(3)}"> headerSort<c:choose><c:when test="${sorter.isReverse(3)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
+						href="<c:url value="ComputerServlet?sort=${sorter.getSort(3)}${extraParam}"/>">Discontinued</a></th>
+					<th
+						class="col5 header<c:if test="${sorter.isCurrent(4)}"> headerSort<c:choose><c:when test="${sorter.isReverse(4)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
+						href="<c:url value="ComputerServlet?sort=${sorter.getSort(4)}${extraParam}"/>">Company</a></th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach var="c" items="${computers}">
 					<tr>
 						<td><a href="<c:url value="ComputerEditServlet?id=${c.id}"/>">${c.name}</a></td>
-						<td><em><c:choose>
-									<c:when test="${empty c.introduced}">-</c:when>
+						<td><c:choose>
+									<c:when test="${empty c.introduced}"><em>-</em></c:when>
 									<c:otherwise>
 										<fmt:formatDate type="date" dateStyle="medium"
 											value="${c.introduced}" />
 									</c:otherwise>
-								</c:choose></em></td>
-						<td><em><c:choose>
-									<c:when test="${empty c.discontinued}">-</c:when>
+								</c:choose></td>
+						<td><c:choose>
+									<c:when test="${empty c.discontinued}"><em>-</em></c:when>
 									<c:otherwise>
 										<fmt:formatDate type="date" dateStyle="medium"
 											value="${c.discontinued}" />
 									</c:otherwise>
-								</c:choose></em></td>
-						<td><em><c:choose>
-									<c:when test="${empty c.company}">-</c:when>
+								</c:choose></td>
+						<td><c:choose>
+									<c:when test="${empty c.company}"><em>-</em></c:when>
 									<c:otherwise>${c.company.name}</c:otherwise>
-								</c:choose></em></td>
+								</c:choose></td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -89,16 +95,13 @@
 
 		<div id="pagination" class="pagination">
 			<ul>
-				<li class="prev<%=numPage <= 0 ? " disabled" : ""%>"><a
-					<%=(numPage <= 0) ? "" : " href=\"ComputerServlet?page="
-					+ (numPage - 1) + extraParam + "\""%>>&larr;
+				<li class="prev<c:out value="${page <= 0 ? ' disabled' : '' }"/>"><a
+					<c:if test="${page > 0}"> href="ComputerServlet?page=${page - 1}${extraParam}"</c:if>>&larr;
 						Previous</a></li>
-				<li class="current"><a>Displaying <%=(numPage * nbPerPage + 1)%>
-						to <%=Math.min(total.intValue(), ((numPage + 1) * nbPerPage))%>
-						of <%=total%></a></li>
-				<li class="next<%=isLastPage ? " disabled" : ""%>"><a
-					<%=(isLastPage) ? "" : " href=\"ComputerServlet?page="
-					+ (numPage + 1) + extraParam + "\""%>>Next
+				<li class="current"><a>Displaying ${page * nbPerPage + 1}
+						to ${numMax} of ${total} </a></li>
+				<li class="next<c:out value="${(page + 1) * nbPerPage > total ? ' disabled' : ''}"/>"><a
+					<c:if test="${(page + 1) * nbPerPage < total}"> href="ComputerServlet?page=${page + 1}${extraParam}"</c:if>>Next
 						&rarr;</a></li>
 			</ul>
 		</div>

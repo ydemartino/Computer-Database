@@ -3,6 +3,7 @@ package com.excilys.dao;
 import java.util.List;
 
 import com.excilys.model.Computer;
+import com.excilys.model.ComputerColumnSorter;
 
 public interface ComputerDAO {
 	
@@ -14,13 +15,13 @@ public interface ComputerDAO {
 	
 	List<Computer> getComputers();
 	
-	List<Computer> getComputers(int page);
+	List<Computer> getComputers(int page, ComputerColumnSorter sorter);
 	
 	int getComputersCount(String filtre);
 	
-	List<Computer> getComputers(String filtre);
+	List<Computer> getComputers(String filtre, ComputerColumnSorter sorter);
 	
-	List<Computer> getComputers(String filtre, int page);
+	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
 	
 	void saveOrUpdate(Computer computer);
 	
