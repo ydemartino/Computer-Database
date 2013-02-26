@@ -59,4 +59,9 @@ public class ComputerServiceImpl implements ComputerService {
 		computerDAO.saveOrUpdate(computer);
 	}
 
+	@Override
+	public void deleteComputer(int id) {
+		computerDAO.delete(id);
+	}
+
 }

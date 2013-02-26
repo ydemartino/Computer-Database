@@ -17,10 +17,10 @@ import com.excilys.service.ComputerServiceImpl;
 import com.excilys.validator.ComputerValidator;
 
 /**
- * Servlet implementation class ComputerAddServlet
+ * Servlet implementation class ComputerEditServlet
  */
-@WebServlet("/ComputerAddServlet")
-public class ComputerAddServlet extends HttpServlet {
+@WebServlet("/ComputerEditServlet")
+public class ComputerEditServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private ComputerService service;
@@ -28,7 +28,7 @@ public class ComputerAddServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ComputerAddServlet() {
+    public ComputerEditServlet() {
         service = new ComputerServiceImpl();
     }
 
@@ -36,12 +36,13 @@ public class ComputerAddServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		Computer computer = service.getComputer(id);
+		request.setAttribute("computer", computer);
 		List<Company> companies = service.getCompanies();
 		request.setAttribute("companies", companies);
 		
-		request.setAttribute("action", "ComputerAddServlet");
-		
-		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp");
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp");
 		rd.forward(request, response);
 	}
 
@@ -56,9 +57,14 @@ public class ComputerAddServlet extends HttpServlet {
 			response.sendRedirect("ComputerServlet");
 		} 
 		else {
+			request.setAttribute("action", "ComputerEditServlet?id=" + request.getParameter("id"));
 			request.setAttribute("validator", validator);
-			doGet(request, response);
+			List<Company> companies = service.getCompanies();
+			request.setAttribute("companies", companies);
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp");
+			rd.forward(request, response);
 		}
+		
 	}
 
 }

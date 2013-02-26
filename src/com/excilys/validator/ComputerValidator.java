@@ -41,7 +41,7 @@ public class ComputerValidator {
 		if (request.getParameter("discontinued") != null
 				&& request.getParameter("discontinued").trim().length() > 0) {
 			try {
-				computer.setIntroduced(format.parse(request
+				computer.setDiscontinued(format.parse(request
 						.getParameter("discontinued")));
 			} catch (ParseException e) {
 				// e.printStackTrace();

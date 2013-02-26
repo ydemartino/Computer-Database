@@ -23,5 +23,7 @@ public interface ComputerDAO {
 	List<Computer> getComputers(String filtre, int page);
 	
 	void saveOrUpdate(Computer computer);
+	
+	void delete(int id);
 
 }

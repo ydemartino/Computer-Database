@@ -18,10 +18,11 @@ public class DBComputerDAO implements ComputerDAO {
 	private static final String BASE_SQL = "SELECT " + BASE_SELECT + BASE_FROM;
 	private static final String BASE_COUNT = "SELECT COUNT(*) " + BASE_FROM;
 	private static final String WHERE_ID = "WHERE c.id = ? ";
-	private static final String WHERE_FILTER = "WHERE c.name LIKE ? ";
+	private static final String WHERE_FILTER = "WHERE UPPER(c.name) LIKE UPPER(?) ";
 	private static final String LIMIT = "LIMIT ?, ? ";
 	private static final String INSERT_SQL = "INSERT INTO computer (id, name, introduced, discontinued, company_id) VALUES (computer_seq.nextval, ?, ?, ?, ?)";
 	private static final String UPDATE_SQL = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
+	private static final String DELETE_SQL = "DELETE FROM computer WHERE id = ?";
 
 	private Computer extractComputer(ResultSet res) throws SQLException {
 		Computer c = new Computer();
@@ -290,6 +291,33 @@ public class DBComputerDAO implements ComputerDAO {
 		try {
 			PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL);
 			bindParameters(computer, stmt, true);
+			conn.setAutoCommit(false);
+			stmt.executeUpdate();
+			conn.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void delete(int id) {
+		Connection conn = DataBaseUtil.getConnection();
+		if (conn == null)
+			return ;
+		try {
+			PreparedStatement stmt = conn.prepareStatement(DELETE_SQL);
+			stmt.setInt(1, id);
 			conn.setAutoCommit(false);
 			stmt.executeUpdate();
 			conn.commit();

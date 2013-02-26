@@ -24,32 +24,36 @@
 	</header>
 
 	<section id="main">
-		<h1>Add a computer</h1>
-		<form action="<c:url value="${action}"/>" method="POST">
+		<h1>Edit computer</h1>
+		<form action="<c:url value="ComputerEditServlet?id=${param.id}"/>"
+			method="POST">
 			<fieldset>
-				<div class="clearfix<c:if test="${!empty validator && !validator.nameValid}"> error</c:if>">
+				<div
+					class="clearfix<c:if test="${!empty validator && !validator.nameValid}"> error</c:if>">
 					<label for="name">Computer name</label>
 					<div class="input">
-						<input type="text" id="name" name="name" value="${param.name}">
+						<input type="text" id="name" name="name" value="${computer.name}">
 						<span class="help-inline">Required</span>
 					</div>
 				</div>
 
-				<div class="clearfix<c:if test="${!empty validator && !validator.introducedValid}"> error</c:if>">
+				<div
+					class="clearfix<c:if test="${!empty validator && !validator.introducedValid}"> error</c:if>">
 					<label for="introduced">Introduced date</label>
 					<div class="input">
 						<input type="text" id="introduced" name="introduced"
-							value="${param.introduced}">
-							<span class="help-inline">Date ('yyyy-MM-dd')</span>
+							value="${computer.introduced}"> <span class="help-inline">Date
+							('yyyy-MM-dd')</span>
 					</div>
 				</div>
 
-				<div class="clearfix<c:if test="${!empty validator && !validator.discontinuedValid}"> error</c:if>">
+				<div
+					class="clearfix<c:if test="${!empty validator && !validator.discontinuedValid}"> error</c:if>">
 					<label for="discontinued">Discontinued date</label>
 					<div class="input">
 						<input type="text" id="discontinued" name="discontinued"
-							value="${param.discontinued}">
-						<span class="help-inline">Date ('yyyy-MM-dd')</span>
+							value="${computer.discontinued}"> <span
+							class="help-inline">Date ('yyyy-MM-dd')</span>
 					</div>
 				</div>
 
@@ -59,7 +63,8 @@
 						<select id="company" name="company">
 							<option class="blank" value="">-- Choose a company --</option>
 							<c:forEach var="c" items="${companies}">
-								<option value="${c.id}"<c:if test="${c.id == param.company}"
+								<option value="${c.id}"
+									<c:if test="${!empty computer.company && c.id == computer.company.id}"
 								> selected="selected"</c:if>>${c.name}</option>
 							</c:forEach>
 						</select> <span class="help-inline"></span>
@@ -67,10 +72,13 @@
 				</div>
 			</fieldset>
 			<div class="actions">
-				<input type="submit" value="Create this computer"
-					class="btn primary"> or <a
-					href="<c:url value="ComputerServlet"/>" class="btn">Cancel</a>
+				<input type="submit" value="Save this computer" class="btn primary">
+				or <a href="<c:url value="ComputerServlet"/>" class="btn">Cancel</a>
 			</div>
+		</form>
+
+		<form action="<c:url value="ComputerDeleteServlet?id=${computer.id}"/>" method="POST" class="topRight">
+			<input type="submit" value="Delete this computer" class="btn danger">
 		</form>
 
 	</section>

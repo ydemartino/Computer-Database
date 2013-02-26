@@ -22,5 +22,7 @@ public interface ComputerService {
 	List<Computer> getComputers(String filtre, int page);
 	
 	void saveOrUpdate(Computer computer);
+	
+	void deleteComputer(int id);
 
 }
