@@ -31,18 +31,24 @@ public class ComputerEditServlet extends HttpServlet {
     public ComputerEditServlet() {
         service = new ComputerServiceImpl();
     }
+    
+    private void initRequest(HttpServletRequest request) {
+		request.setAttribute("isEdit", true);
+		request.setAttribute("action", "ComputerEditServlet?id=" + request.getParameter("id"));
+		List<Company> companies = service.getCompanies();
+		request.setAttribute("companies", companies);
+    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		initRequest(request);
 		int id = Integer.parseInt(request.getParameter("id"));
 		Computer computer = service.getComputer(id);
 		request.setAttribute("computer", computer);
-		List<Company> companies = service.getCompanies();
-		request.setAttribute("companies", companies);
 		
-		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp");
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/formComputer.jsp");
 		rd.forward(request, response);
 	}
 
@@ -56,12 +62,9 @@ public class ComputerEditServlet extends HttpServlet {
 			service.saveOrUpdate(c);
 			response.sendRedirect("ComputerServlet");
 		} 
-		else {
-			request.setAttribute("action", "ComputerEditServlet?id=" + request.getParameter("id"));
+		else {initRequest(request);
 			request.setAttribute("validator", validator);
-			List<Company> companies = service.getCompanies();
-			request.setAttribute("companies", companies);
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp");
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/formComputer.jsp");
 			rd.forward(request, response);
 		}
 		

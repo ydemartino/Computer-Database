@@ -17,7 +17,7 @@ public class DataBaseUtil {
 	public static Connection getConnection() {
 		try {
 			return DriverManager.getConnection(
-					"jdbc:h2:~/computer", "sa", "");
+					"jdbc:h2:tcp://localhost/~/computer", "sa", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

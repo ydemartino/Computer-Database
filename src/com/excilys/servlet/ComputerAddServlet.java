@@ -41,7 +41,7 @@ public class ComputerAddServlet extends HttpServlet {
 		
 		request.setAttribute("action", "ComputerAddServlet");
 		
-		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp");
+		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/formComputer.jsp");
 		rd.forward(request, response);
 	}
 

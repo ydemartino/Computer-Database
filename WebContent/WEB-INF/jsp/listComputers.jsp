@@ -4,24 +4,17 @@
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.model.Computer"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Computers database</title>
-<link rel="stylesheet" type="text/css" media="screen"
+<link rel="stylesheet" media="screen"
 	href="<c:url value="/css/bootstrap.min.css"/>">
-<link rel="stylesheet" type="text/css" media="screen"
+<link rel="stylesheet" media="screen"
 	href="<c:url value="/css/main.css"/>">
 </head>
-<%
-	Integer nbPerPage = (Integer) request.getAttribute("nbPerPage");
-	Integer numPage = (Integer) request.getAttribute("page");
-	Integer total = (Integer) request.getAttribute("total");
-	String extraParam = request.getParameter("filter") != null ? String
-			.format("&filter=%s", request.getParameter("filter")) : "";
-	boolean isLastPage = (numPage + 1) * nbPerPage > total;
-%>
 <c:if test="${!empty param.filter}">
 	<c:set var="extraParam" value="&filter=${param.filter}" />
 </c:if>
