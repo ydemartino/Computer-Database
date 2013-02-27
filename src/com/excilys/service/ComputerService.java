@@ -22,8 +22,10 @@ public interface ComputerService {
 	
 	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
 	
-	void saveOrUpdate(Computer computer);
+	void saveOrUpdate(Computer computer, String ipAddress);
 	
-	void deleteComputer(int id);
+	void deleteComputer(int id, String ipAddress);
+	
+	void closeConnection();
 
 }

@@ -22,20 +22,18 @@ import com.excilys.service.ComputerServiceImpl;
 @WebServlet("/ComputerServlet")
 public class ComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	private ComputerService service;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ComputerServlet() {
-        service = new ComputerServiceImpl();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ComputerService service = new ComputerServiceImpl();
 		int page = 0;
 		try {
 			page = Integer.parseInt(request.getParameter("page"));
@@ -65,6 +63,8 @@ public class ComputerServlet extends HttpServlet {
 			computers = service.getComputers(filter, page, sorter);
 		}
 
+		service.closeConnection();
+		
 		request.setAttribute("computers", computers);
 		request.setAttribute("total", total);
 		request.setAttribute("page", page);

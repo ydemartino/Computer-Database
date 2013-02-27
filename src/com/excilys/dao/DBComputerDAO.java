@@ -25,6 +25,12 @@ public class DBComputerDAO implements ComputerDAO {
 	private static final String UPDATE_SQL = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String DELETE_SQL = "DELETE FROM computer WHERE id = ?";
 	private static final String ORDER = "ORDER BY UPPER(%1$s) %2$s ";
+	
+	private Connection connection;
+	
+	public DBComputerDAO(Connection connection) {
+		this.connection = connection;
+	}
 
 	private String getOrderBy(ComputerColumnSorter sorter) {
 		return String.format(ORDER, sorter.getColumnName(), sorter.getOrderBy());
@@ -49,211 +55,112 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public Computer getComputer(int id) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return null;
-		try {
-			StringBuilder sb = new StringBuilder(BASE_SQL);
-			sb.append(WHERE_ID);
-			PreparedStatement stmt = conn.prepareStatement(sb.toString());
-			stmt.setInt(1, id);
-			ResultSet res = stmt.executeQuery();
-			Computer c = null;
-			if (res.next()) {
-				c = extractComputer(res);
-			}
-			res.close();
-			return c;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public Computer getComputer(int id) throws SQLException {
+		StringBuilder sb = new StringBuilder(BASE_SQL);
+		sb.append(WHERE_ID);
+		PreparedStatement stmt = connection.prepareStatement(sb.toString());
+		stmt.setInt(1, id);
+		ResultSet res = stmt.executeQuery();
+		Computer c = null;
+		if (res.next()) {
+			c = extractComputer(res);
 		}
-		return null;
+		res.close();
+		return c;
 	}
 
 	@Override
-	public int getComputersCount() {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return 0;
-		try {
-			PreparedStatement stmt = conn.prepareStatement(BASE_COUNT);
-			ResultSet res = stmt.executeQuery();
-			if (res.next()) {
-				return res.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return 0;
+	public int getComputersCount() throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(BASE_COUNT);
+		ResultSet res = stmt.executeQuery();
+		res.next();
+		return res.getInt(1);
 	}
 
 	@Override
-	public List<Computer> getComputers() {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return null;
-		try {
-			PreparedStatement stmt = conn.prepareStatement(BASE_SQL);
-			ResultSet res = stmt.executeQuery();
-			List<Computer> list = new ArrayList<Computer>();
-			while (res.next()) {
-				list.add(extractComputer(res));
-			}
-			res.close();
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public List<Computer> getComputers() throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(BASE_SQL);
+		ResultSet res = stmt.executeQuery();
+		List<Computer> list = new ArrayList<Computer>();
+		while (res.next()) {
+			list.add(extractComputer(res));
 		}
-		return null;
+		res.close();
+		return list;
 	}
 
 	@Override
-	public List<Computer> getComputers(int page, ComputerColumnSorter sorter) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return null;
-		try {
-			StringBuilder sb = new StringBuilder(BASE_SQL);
-			sb.append(getOrderBy(sorter));
-			sb.append(LIMIT);
-			PreparedStatement stmt = conn.prepareStatement(sb.toString());
-			stmt.setInt(1, page * NB_PER_PAGE);
-			stmt.setInt(2, NB_PER_PAGE);
-			ResultSet res = stmt.executeQuery();
-			List<Computer> list = new ArrayList<Computer>();
-			while (res.next()) {
-				list.add(extractComputer(res));
-			}
-			res.close();
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public List<Computer> getComputers(int page, ComputerColumnSorter sorter) throws SQLException {
+		StringBuilder sb = new StringBuilder(BASE_SQL);
+		sb.append(getOrderBy(sorter));
+		sb.append(LIMIT);
+		PreparedStatement stmt = connection.prepareStatement(sb.toString());
+		stmt.setInt(1, page * NB_PER_PAGE);
+		stmt.setInt(2, NB_PER_PAGE);
+		ResultSet res = stmt.executeQuery();
+		List<Computer> list = new ArrayList<Computer>();
+		while (res.next()) {
+			list.add(extractComputer(res));
 		}
-		return null;
+		res.close();
+		return list;
 	}
 
 	@Override
-	public int getComputersCount(String filtre) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return 0;
-		try {
-			StringBuilder sb = new StringBuilder(BASE_COUNT);
-			sb.append(WHERE_FILTER);
-			PreparedStatement stmt = conn.prepareStatement(sb.toString());
-			stmt.setString(1, String.format("%%%s%%", filtre));
-			ResultSet res = stmt.executeQuery();
-			if (res.next()) {
-				return res.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return 0;
+	public int getComputersCount(String filtre) throws SQLException {
+		StringBuilder sb = new StringBuilder(BASE_COUNT);
+		sb.append(WHERE_FILTER);
+		PreparedStatement stmt = connection.prepareStatement(sb.toString());
+		stmt.setString(1, String.format("%%%s%%", filtre));
+		ResultSet res = stmt.executeQuery();
+		res.next();
+		return res.getInt(1);
 	}
 
 	@Override
-	public List<Computer> getComputers(String filtre, ComputerColumnSorter sorter) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return null;
-		try {
-			StringBuilder sb = new StringBuilder(BASE_SQL);
-			sb.append(WHERE_FILTER);
-			sb.append(getOrderBy(sorter));
-			PreparedStatement stmt = conn.prepareStatement(sb.toString());
-			stmt.setString(1, String.format("%%%s%%", filtre));
-			ResultSet res = stmt.executeQuery();
-			List<Computer> list = new ArrayList<Computer>();
-			while (res.next()) {
-				list.add(extractComputer(res));
-			}
-			res.close();
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public List<Computer> getComputers(String filtre, ComputerColumnSorter sorter) throws SQLException {
+		StringBuilder sb = new StringBuilder(BASE_SQL);
+		sb.append(WHERE_FILTER);
+		sb.append(getOrderBy(sorter));
+		PreparedStatement stmt = connection.prepareStatement(sb.toString());
+		stmt.setString(1, String.format("%%%s%%", filtre));
+		ResultSet res = stmt.executeQuery();
+		List<Computer> list = new ArrayList<Computer>();
+		while (res.next()) {
+			list.add(extractComputer(res));
 		}
-		return null;
+		res.close();
+		return list;
 	}
 
 	@Override
-	public List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return null;
-		try {
-			StringBuilder sb = new StringBuilder(BASE_SQL);
-			sb.append(WHERE_FILTER);
-			sb.append(getOrderBy(sorter));
-			sb.append(LIMIT);
-			PreparedStatement stmt = conn.prepareStatement(sb.toString());
-			stmt.setString(1, String.format("%%%s%%", filtre));
-			stmt.setInt(2, page * NB_PER_PAGE);
-			stmt.setInt(3, NB_PER_PAGE);
-			ResultSet res = stmt.executeQuery();
-			List<Computer> list = new ArrayList<Computer>();
-			while (res.next()) {
-				list.add(extractComputer(res));
-			}
-			res.close();
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	public List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) throws SQLException {
+		StringBuilder sb = new StringBuilder(BASE_SQL);
+		sb.append(WHERE_FILTER);
+		sb.append(getOrderBy(sorter));
+		sb.append(LIMIT);
+		PreparedStatement stmt = connection.prepareStatement(sb.toString());
+		stmt.setString(1, String.format("%%%s%%", filtre));
+		stmt.setInt(2, page * NB_PER_PAGE);
+		stmt.setInt(3, NB_PER_PAGE);
+		ResultSet res = stmt.executeQuery();
+		List<Computer> list = new ArrayList<Computer>();
+		while (res.next()) {
+			list.add(extractComputer(res));
 		}
-		return null;
+		res.close();
+		return list;
 	}
 
 	@Override
-	public void saveOrUpdate(Computer computer) {
+	public boolean saveOrUpdate(Computer computer) throws SQLException {
 		if (computer.getId() <= 0) {
 			save(computer);
+			return true;
 		}
-		else {
-			update(computer);
-		}
+		
+		update(computer);
+		return false;
 	}
 	
 	private void bindParameters(Computer computer, PreparedStatement stmt, boolean withId) throws SQLException {
@@ -274,76 +181,23 @@ public class DBComputerDAO implements ComputerDAO {
 			stmt.setInt(5, computer.getId());
 	}
 	
-	private void save(Computer computer) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return ;
-		try {
-			PreparedStatement stmt = conn.prepareStatement(INSERT_SQL);
-			bindParameters(computer, stmt, false);
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	private void save(Computer computer) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(INSERT_SQL);
+		bindParameters(computer, stmt, false);
+		stmt.executeUpdate();
 	}
 	
-	private void update(Computer computer) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return ;
-		try {
-			PreparedStatement stmt = conn.prepareStatement(UPDATE_SQL);
-			bindParameters(computer, stmt, true);
-			conn.setAutoCommit(false);
-			stmt.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	private void update(Computer computer) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(UPDATE_SQL);
+		bindParameters(computer, stmt, true);
+		stmt.executeUpdate();
 	}
 
 	@Override
-	public void delete(int id) {
-		Connection conn = DataBaseUtil.getConnection();
-		if (conn == null)
-			return ;
-		try {
-			PreparedStatement stmt = conn.prepareStatement(DELETE_SQL);
-			stmt.setInt(1, id);
-			conn.setAutoCommit(false);
-			stmt.executeUpdate();
-			conn.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	public void delete(int id) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(DELETE_SQL);
+		stmt.setInt(1, id);
+		stmt.executeUpdate();
 	}
 
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+   <Resource name="jdbc/Computer" auth="Container" type="com.jolbox.bonecp.BoneCPDataSource"
+             factory="com.jolbox.bonecp.BoneCPDataSource"
+             maxActive="100" maxIdle="50" maxWait="10000"
+             username="sa" password="" driverClassName="org.h2.Driver"
+             jdbcUrl="jdbc:h2:tcp://localhost/~/computer"/>
+</Context>
