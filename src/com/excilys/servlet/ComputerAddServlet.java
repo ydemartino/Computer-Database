@@ -23,21 +23,21 @@ import com.excilys.validator.ComputerValidator;
 public class ComputerAddServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	private ComputerService service;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ComputerAddServlet() {
+    	service = ComputerServiceImpl.INSTANCE;
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerService service = new ComputerServiceImpl();
 		List<Company> companies = service.getCompanies();
 		request.setAttribute("companies", companies);
-		
-		service.closeConnection();
 		
 		request.setAttribute("action", "ComputerAddServlet");
 		
@@ -49,15 +49,13 @@ public class ComputerAddServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerService service = new ComputerServiceImpl();
 		ComputerValidator validator = new ComputerValidator(request, service);
 		if (validator.isValid()) {
 			Computer c = validator.getComputer();
 			service.saveOrUpdate(c, request.getRemoteAddr());
-			response.sendRedirect("ComputerServlet");
+			response.sendRedirect("ComputerServlet?added=" + c.getName());
 		} 
 		else {
-			service.closeConnection();
 			request.setAttribute("validator", validator);
 			doGet(request, response);
 		}

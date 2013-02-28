@@ -23,10 +23,13 @@ import com.excilys.validator.ComputerValidator;
 public class ComputerEditServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	private ComputerService service;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ComputerEditServlet() {
+    	service = ComputerServiceImpl.INSTANCE;
     }
     
     private void initRequest(HttpServletRequest request, ComputerService service) {
@@ -40,12 +43,10 @@ public class ComputerEditServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerService service = new ComputerServiceImpl();
 		initRequest(request, service);
 		int id = Integer.parseInt(request.getParameter("id"));
 		Computer computer = service.getComputer(id);
 		request.setAttribute("computer", computer);
-		service.closeConnection();
 		
 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/formComputer.jsp");
 		rd.forward(request, response);
@@ -55,16 +56,14 @@ public class ComputerEditServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerService service = new ComputerServiceImpl();
 		ComputerValidator validator = new ComputerValidator(request, service);
 		if (validator.isValid()) {
 			Computer c = validator.getComputer();
 			service.saveOrUpdate(c, request.getRemoteAddr());
-			response.sendRedirect("ComputerServlet");
+			response.sendRedirect("ComputerServlet?edited=" + c.getName());
 		} 
 		else {
 			initRequest(request, service);
-			service.closeConnection();
 			request.setAttribute("validator", validator);
 			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/formComputer.jsp");
 			rd.forward(request, response);

@@ -28,9 +28,15 @@
 
 	<section id="main">
 		<h1>${total} computers found</h1>
+    
+    	<c:if test="${!empty param.added || !empty param.edited}">
+        <div class="alert-message warning">
+            <strong>Done!</strong> Computer ${param.added}${param.edited} has been <c:out value="${!empty param.added ? 'created' : 'updated' }" />
+        </div>
+        </c:if>
 
 		<div id="actions">
-			<form action="" method="GET">
+			<form action="<c:url value="ComputerServlet"/>" method="GET">
 				<input type="search" id="searchbox" name="filter"
 					value="${param.filter}" placeholder="Filter by computer name...">
 				<input type="submit" id="searchsubmit" value="Filter by name"

@@ -1,7 +1,6 @@
 package com.excilys.servlet;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.dao.ComputerDAO;
-import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
+import com.excilys.model.ResultComputer;
 import com.excilys.service.ComputerService;
 import com.excilys.service.ComputerServiceImpl;
 
@@ -22,18 +21,20 @@ import com.excilys.service.ComputerServiceImpl;
 @WebServlet("/ComputerServlet")
 public class ComputerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private ComputerService service;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ComputerServlet() {
+    	service = ComputerServiceImpl.INSTANCE;
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ComputerService service = new ComputerServiceImpl();
 		int page = 0;
 		try {
 			page = Integer.parseInt(request.getParameter("page"));
@@ -52,23 +53,14 @@ public class ComputerServlet extends HttpServlet {
 		
 		final String filter = request.getParameter("filter");
 		
-		List<Computer> computers = null;
-		int total;
-		if (filter == null) {
-			total = service.getComputersCount();
-			computers = service.getComputers(page, sorter);
-		}
-		else {
-			total = service.getComputersCount(filter);
-			computers = service.getComputers(filter, page, sorter);
-		}
-
-		service.closeConnection();
+		ResultComputer res = filter == null 
+				? service.getComputers(page, sorter)
+				: service.getComputers(filter, page, sorter);
 		
-		request.setAttribute("computers", computers);
-		request.setAttribute("total", total);
+		request.setAttribute("computers", res.getComputers());
+		request.setAttribute("total", res.getTotal());
 		request.setAttribute("page", page);
-		request.setAttribute("numMax", Math.min(total, (page + 1) * ComputerDAO.NB_PER_PAGE));
+		request.setAttribute("numMax", Math.min(res.getTotal(), (page + 1) * ComputerDAO.NB_PER_PAGE));
 		request.setAttribute("nbPerPage", ComputerDAO.NB_PER_PAGE);
 		
 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/jsp/listComputers.jsp");

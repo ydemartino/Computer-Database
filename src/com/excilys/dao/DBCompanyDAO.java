@@ -9,14 +9,10 @@ import java.util.List;
 
 import com.excilys.model.Company;
 
-public class DBCompanyDAO implements CompanyDAO {
+public enum DBCompanyDAO implements CompanyDAO {
 	
-	private Connection connection;
-	
-	public DBCompanyDAO(Connection connection) {
-		this.connection = connection;
-	}
-	
+	INSTANCE;
+
 	private Company extractCompany(ResultSet res) throws SQLException {
 		Company c = new Company();
 		c.setId(res.getInt("id"));
@@ -26,6 +22,7 @@ public class DBCompanyDAO implements CompanyDAO {
 	
 	@Override
 	public Company getCompany(int id) throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement("SELECT * FROM company WHERE id = ?");
 		stmt.setInt(1, id);
 		ResultSet res = stmt.executeQuery();
@@ -39,6 +36,7 @@ public class DBCompanyDAO implements CompanyDAO {
 
 	@Override
 	public List<Company> getCompanies() throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement("SELECT * FROM company ORDER BY name");
 		ResultSet res = stmt.executeQuery();
 		List<Company> list = new ArrayList<Company>();

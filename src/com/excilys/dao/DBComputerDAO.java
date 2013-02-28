@@ -12,8 +12,10 @@ import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
 
-public class DBComputerDAO implements ComputerDAO {
+public enum DBComputerDAO implements ComputerDAO {
 
+	INSTANCE;
+	
 	private static final String BASE_SELECT = "c.id c_id, c.name c_name, introduced, discontinued, cy.id cy_id, cy.name cy_name ";
 	private static final String BASE_FROM = "FROM computer c LEFT JOIN company cy ON c.company_id = cy.id ";
 	private static final String BASE_SQL = "SELECT " + BASE_SELECT + BASE_FROM;
@@ -26,11 +28,6 @@ public class DBComputerDAO implements ComputerDAO {
 	private static final String DELETE_SQL = "DELETE FROM computer WHERE id = ?";
 	private static final String ORDER = "ORDER BY UPPER(%1$s) %2$s ";
 	
-	private Connection connection;
-	
-	public DBComputerDAO(Connection connection) {
-		this.connection = connection;
-	}
 
 	private String getOrderBy(ComputerColumnSorter sorter) {
 		return String.format(ORDER, sorter.getColumnName(), sorter.getOrderBy());
@@ -58,6 +55,7 @@ public class DBComputerDAO implements ComputerDAO {
 	public Computer getComputer(int id) throws SQLException {
 		StringBuilder sb = new StringBuilder(BASE_SQL);
 		sb.append(WHERE_ID);
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(sb.toString());
 		stmt.setInt(1, id);
 		ResultSet res = stmt.executeQuery();
@@ -71,14 +69,18 @@ public class DBComputerDAO implements ComputerDAO {
 
 	@Override
 	public int getComputersCount() throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(BASE_COUNT);
 		ResultSet res = stmt.executeQuery();
 		res.next();
-		return res.getInt(1);
+		int count = res.getInt(1);
+		res.close();
+		return count;
 	}
 
 	@Override
 	public List<Computer> getComputers() throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(BASE_SQL);
 		ResultSet res = stmt.executeQuery();
 		List<Computer> list = new ArrayList<Computer>();
@@ -94,6 +96,7 @@ public class DBComputerDAO implements ComputerDAO {
 		StringBuilder sb = new StringBuilder(BASE_SQL);
 		sb.append(getOrderBy(sorter));
 		sb.append(LIMIT);
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(sb.toString());
 		stmt.setInt(1, page * NB_PER_PAGE);
 		stmt.setInt(2, NB_PER_PAGE);
@@ -110,11 +113,14 @@ public class DBComputerDAO implements ComputerDAO {
 	public int getComputersCount(String filtre) throws SQLException {
 		StringBuilder sb = new StringBuilder(BASE_COUNT);
 		sb.append(WHERE_FILTER);
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(sb.toString());
 		stmt.setString(1, String.format("%%%s%%", filtre));
 		ResultSet res = stmt.executeQuery();
 		res.next();
-		return res.getInt(1);
+		int count = res.getInt(1);
+		res.close();
+		return count;
 	}
 
 	@Override
@@ -122,6 +128,7 @@ public class DBComputerDAO implements ComputerDAO {
 		StringBuilder sb = new StringBuilder(BASE_SQL);
 		sb.append(WHERE_FILTER);
 		sb.append(getOrderBy(sorter));
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(sb.toString());
 		stmt.setString(1, String.format("%%%s%%", filtre));
 		ResultSet res = stmt.executeQuery();
@@ -139,6 +146,7 @@ public class DBComputerDAO implements ComputerDAO {
 		sb.append(WHERE_FILTER);
 		sb.append(getOrderBy(sorter));
 		sb.append(LIMIT);
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(sb.toString());
 		stmt.setString(1, String.format("%%%s%%", filtre));
 		stmt.setInt(2, page * NB_PER_PAGE);
@@ -182,12 +190,14 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 	
 	private void save(Computer computer) throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(INSERT_SQL);
 		bindParameters(computer, stmt, false);
 		stmt.executeUpdate();
 	}
 	
 	private void update(Computer computer) throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(UPDATE_SQL);
 		bindParameters(computer, stmt, true);
 		stmt.executeUpdate();
@@ -195,6 +205,7 @@ public class DBComputerDAO implements ComputerDAO {
 
 	@Override
 	public void delete(int id) throws SQLException {
+		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement(DELETE_SQL);
 		stmt.setInt(1, id);
 		stmt.executeUpdate();

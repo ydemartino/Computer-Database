@@ -9,36 +9,31 @@ import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.ComputerDAO;
 import com.excilys.dao.DBCompanyDAO;
 import com.excilys.dao.DBComputerDAO;
-import com.excilys.dao.DataBaseUtil;
+import com.excilys.dao.DataSourceFactory;
 import com.excilys.dao.DBStatisticDAO;
 import com.excilys.dao.StatisticDAO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
+import com.excilys.model.ResultComputer;
 import com.excilys.model.Statistic;
 
-public class ComputerServiceImpl implements ComputerService {
+public enum ComputerServiceImpl implements ComputerService {
 	
-	private Connection connection;
+	INSTANCE;
+	
 	private ComputerDAO computerDAO;
 	private CompanyDAO companyDAO;
 	private StatisticDAO statisticDAO;
 	
-	public ComputerServiceImpl() {
-		connection = DataBaseUtil.getConnection();
-		if (connection == null)
-			throw new IllegalStateException("Impossible de récupérer une connexion !");
-		computerDAO = new DBComputerDAO(connection);
-		companyDAO = new DBCompanyDAO(connection);
-		statisticDAO = new DBStatisticDAO(connection); 
+	private ComputerServiceImpl() {
+		computerDAO = DBComputerDAO.INSTANCE;
+		companyDAO = DBCompanyDAO.INSTANCE;
+		statisticDAO = DBStatisticDAO.INSTANCE;
 	}
 	
-	public void closeConnection() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	private void closeConnection() {
+		DataSourceFactory.INSTANCE.closeConnection();
 	}
 
 	@Override
@@ -48,6 +43,8 @@ public class ComputerServiceImpl implements ComputerService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			closeConnection();
 		}
 	}
 
@@ -58,6 +55,8 @@ public class ComputerServiceImpl implements ComputerService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			closeConnection();
 		}
 	}
 
@@ -68,52 +67,44 @@ public class ComputerServiceImpl implements ComputerService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			closeConnection();
 		}
 	}
 
 	@Override
-	public int getComputersCount() {
+	public ResultComputer getComputers(int page, ComputerColumnSorter sorter) {
 		try {
-			return computerDAO.getComputersCount();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
-		}
-	}
-
-	@Override
-	public List<Computer> getComputers(int page, ComputerColumnSorter sorter) {
-		try {
-			return computerDAO.getComputers(page, sorter);
+			List<Computer> computers = computerDAO.getComputers(page, sorter);
+			int total = computerDAO.getComputersCount(); 
+			return new ResultComputer(computers, total);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			closeConnection();
 		}
 	}
 
 	@Override
-	public int getComputersCount(String filtre) {
+	public ResultComputer getComputers(String filtre, int page, ComputerColumnSorter sorter) {
 		try {
-			return computerDAO.getComputersCount(filtre);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
-		}
-	}
-
-	@Override
-	public List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) {
-		try {
-			return computerDAO.getComputers(filtre, page, sorter);
+			List<Computer> computers = computerDAO.getComputers(filtre, page, sorter);
+			int total = computerDAO.getComputersCount(filtre); 
+			return new ResultComputer(computers, total);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			closeConnection();
 		}
 	}
 
 	@Override
 	public void saveOrUpdate(Computer computer, String ipAddress) {
+		Connection connection = null;
 		try {
+			connection = DataSourceFactory.INSTANCE.getConnectionThread();
 			connection.setAutoCommit(false);
 			boolean inserted = computerDAO.saveOrUpdate(computer);
 			Statistic stat = new Statistic();
@@ -126,7 +117,8 @@ public class ComputerServiceImpl implements ComputerService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			try {
-				connection.rollback();
+				if (connection != null)
+					connection.rollback();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -137,7 +129,9 @@ public class ComputerServiceImpl implements ComputerService {
 
 	@Override
 	public void deleteComputer(int id, String ipAddress) {
+		Connection connection = null;
 		try {
+			connection = DataSourceFactory.INSTANCE.getConnectionThread();
 			connection.setAutoCommit(false);
 			computerDAO.delete(id);
 			Statistic stat = new Statistic();
