@@ -17,7 +17,7 @@
 <body>
 	<header class="topbar">
 		<h1 class="fill">
-			<a href="<c:url value="ComputerServlet"/>">Computer database
+			<a href="<c:url value="/computers.do"/>">Computer database
 				&mdash;</a>
 		</h1>
 	</header>
@@ -61,8 +61,8 @@
 						<select id="company" name="company">
 							<option class="blank" value="">-- Choose a company --</option>
 							<c:forEach var="c" items="${companies}">
-								<option value="${c.id}"
-									<c:if test="${c.id == param.company || c.id == computer.company.id}"> 
+								<option value="${c.id}" <c:if 
+									test="${c.id == param.company || c.id == computer.company.id}"> 
 									selected="selected"</c:if>>${c.name}</option>
 							</c:forEach>
 						</select> <span class="help-inline"></span>
@@ -77,7 +77,7 @@
 		</form>
 
 		<c:if test="${isEdit}">
-		<form action="<c:url value="ComputerDeleteServlet?id=${param.id}"/>" method="POST" class="topRight">
+		<form action="<c:url value="/computers/${id}/delete.do"/>" method="POST" class="topRight">
 			<input type="submit" value="Delete this computer" class="btn danger">
 		</form>
 		</c:if>

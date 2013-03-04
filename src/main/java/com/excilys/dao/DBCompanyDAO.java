@@ -7,11 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.excilys.model.Company;
 
-public enum DBCompanyDAO implements CompanyDAO {
+@Repository
+public class DBCompanyDAO implements CompanyDAO {
 	
-	INSTANCE;
+	@Autowired
+	private DataSourceFactory dsFactory;
 
 	private Company extractCompany(ResultSet res) throws SQLException {
 		Company c = new Company();
@@ -22,7 +27,7 @@ public enum DBCompanyDAO implements CompanyDAO {
 	
 	@Override
 	public Company getCompany(int id) throws SQLException {
-		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
+		Connection connection = dsFactory.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement("SELECT * FROM company WHERE id = ?");
 		stmt.setInt(1, id);
 		ResultSet res = stmt.executeQuery();
@@ -36,7 +41,7 @@ public enum DBCompanyDAO implements CompanyDAO {
 
 	@Override
 	public List<Company> getCompanies() throws SQLException {
-		Connection connection = DataSourceFactory.INSTANCE.getConnectionThread();
+		Connection connection = dsFactory.getConnectionThread();
 		PreparedStatement stmt = connection.prepareStatement("SELECT * FROM company ORDER BY name");
 		ResultSet res = stmt.executeQuery();
 		List<Company> list = new ArrayList<Company>();

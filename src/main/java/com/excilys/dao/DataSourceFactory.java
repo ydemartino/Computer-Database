@@ -3,25 +3,20 @@ package com.excilys.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-public enum DataSourceFactory {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DataSourceFactory {
 	
-	INSTANCE;
-	
+	@Autowired
 	private DataSource ds;
 	private ThreadLocal<Connection> conn;
 	
-	private DataSourceFactory() {
+	public DataSourceFactory() {
 		conn = new ThreadLocal<Connection>();
-		try {
-			InitialContext cxt = new InitialContext();
-			ds = (DataSource)cxt.lookup("java:/comp/env/jdbc/Computer");
-		} catch (NamingException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public Connection getConnectionThread() throws SQLException {

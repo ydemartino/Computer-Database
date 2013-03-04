@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.ComputerDAO;
-import com.excilys.dao.DBCompanyDAO;
-import com.excilys.dao.DBComputerDAO;
 import com.excilys.dao.DataSourceFactory;
-import com.excilys.dao.DBStatisticDAO;
 import com.excilys.dao.StatisticDAO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
@@ -18,22 +18,20 @@ import com.excilys.model.ComputerColumnSorter;
 import com.excilys.model.ResultComputer;
 import com.excilys.model.Statistic;
 
-public enum ComputerServiceImpl implements ComputerService {
+@Service
+public class ComputerServiceImpl implements ComputerService {
 	
-	INSTANCE;
-	
+	@Autowired
+	private DataSourceFactory dsFactory;
+	@Autowired
 	private ComputerDAO computerDAO;
+	@Autowired
 	private CompanyDAO companyDAO;
+	@Autowired
 	private StatisticDAO statisticDAO;
 	
-	private ComputerServiceImpl() {
-		computerDAO = DBComputerDAO.INSTANCE;
-		companyDAO = DBCompanyDAO.INSTANCE;
-		statisticDAO = DBStatisticDAO.INSTANCE;
-	}
-	
 	private void closeConnection() {
-		DataSourceFactory.INSTANCE.closeConnection();
+		dsFactory.closeConnection();
 	}
 
 	@Override
@@ -76,7 +74,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	public ResultComputer getComputers(int page, ComputerColumnSorter sorter) {
 		try {
 			List<Computer> computers = computerDAO.getComputers(page, sorter);
-			int total = computerDAO.getComputersCount(); 
+			int total = computerDAO.getComputersCount();
 			return new ResultComputer(computers, total);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -104,7 +102,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	public void saveOrUpdate(Computer computer, String ipAddress) {
 		Connection connection = null;
 		try {
-			connection = DataSourceFactory.INSTANCE.getConnectionThread();
+			connection = dsFactory.getConnectionThread();
 			connection.setAutoCommit(false);
 			boolean inserted = computerDAO.saveOrUpdate(computer);
 			Statistic stat = new Statistic();
@@ -131,7 +129,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	public void deleteComputer(int id, String ipAddress) {
 		Connection connection = null;
 		try {
-			connection = DataSourceFactory.INSTANCE.getConnectionThread();
+			connection = dsFactory.getConnectionThread();
 			connection.setAutoCommit(false);
 			computerDAO.delete(id);
 			Statistic stat = new Statistic();
