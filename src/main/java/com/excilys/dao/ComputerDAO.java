@@ -1,6 +1,5 @@
 package com.excilys.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.excilys.model.Computer;
@@ -10,22 +9,22 @@ public interface ComputerDAO {
 	
 	int NB_PER_PAGE = 10;
 	
-	Computer getComputer(int id) throws SQLException;
+	Computer getComputer(int id);
 	
-	int getComputersCount() throws SQLException;
+	int getComputersCount();
 	
-	List<Computer> getComputers() throws SQLException;
+	List<Computer> getComputers();
 	
-	List<Computer> getComputers(int page, ComputerColumnSorter sorter) throws SQLException;
+	List<Computer> getComputers(int page, ComputerColumnSorter sorter);
 	
-	int getComputersCount(String filtre) throws SQLException;
+	int getComputersCount(String filtre);
 	
-	List<Computer> getComputers(String filtre, ComputerColumnSorter sorter) throws SQLException;
+	List<Computer> getComputers(String filtre, ComputerColumnSorter sorter);
 	
-	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter) throws SQLException;
+	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
 	
-	boolean saveOrUpdate(Computer computer) throws SQLException;
+	boolean saveOrUpdate(Computer computer);
 	
-	void delete(int id) throws SQLException;
+	void delete(int id);
 
 }

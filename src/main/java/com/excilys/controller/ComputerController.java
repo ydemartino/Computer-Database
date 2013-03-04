@@ -81,8 +81,6 @@ public class ComputerController {
 			@RequestParam(value="discontinued", required=false) String discontinued,
 			@RequestParam(value="company", required=false) Integer companyId, Model model,
 			HttpServletRequest request) {
-		Computer computer = service.getComputer(id);
-		request.setAttribute("computer", computer);
 		if (request.getMethod().equals("POST")) {
 			ComputerValidator validator = new ComputerValidator(id, name,
 					introduced, discontinued, companyId, service);
@@ -93,6 +91,9 @@ public class ComputerController {
 				return String.format("redirect:/computers.do?edited=%s", c.getName());
 			} 
 			model.addAttribute("validator", validator); 
+		} else {
+			Computer computer = service.getComputer(id);
+			request.setAttribute("computer", computer);
 		}
 	    
 		request.setAttribute("isEdit", true);

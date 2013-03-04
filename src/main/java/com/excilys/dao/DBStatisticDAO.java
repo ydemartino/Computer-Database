@@ -1,10 +1,9 @@
 package com.excilys.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.model.Statistic;
@@ -13,21 +12,20 @@ import com.excilys.model.Statistic;
 public class DBStatisticDAO implements StatisticDAO {
 	
 	@Autowired
-	private DataSourceFactory dsFactory;
+	private JdbcTemplate jdbcTemplate;
 	
 	@Override
-	public void save(Statistic stat) throws SQLException {
-		String query = String.format("INSERT INTO statistic (computer_id, date_modif, ip_address, operation) VALUES (%s, CURRENT_TIMESTAMP, ?, ?)",
-				stat.getComputerId() <= 0 ? "COMPUTER_SEQ.CURRVAL" : "?");
-		Connection connection = dsFactory.getConnectionThread();
-		PreparedStatement stmt = connection.prepareStatement(query);
-		int idx = 0;
+	public void save(Statistic stat) {
+		String query = String.format("INSERT INTO statistic (computer_id, date_modif, ip_address, operation) VALUES (%s, CURRENT_TIMESTAMP, :ip, :operation)",
+				stat.getComputerId() <= 0 ? "COMPUTER_SEQ.CURRVAL" : ":id");
+
+		MapSqlParameterSource namedParams = new MapSqlParameterSource();
 		if (stat.getComputerId() > 0) {
-			stmt.setInt(++idx, stat.getComputerId());
+			namedParams.addValue("id", stat.getComputerId());
 		}
-		stmt.setString(++idx, stat.getIp());
-		stmt.setInt(++idx, stat.getOperation().getNum());
-		stmt.executeUpdate();
+		namedParams.addValue("ip", stat.getIp());
+		namedParams.addValue("operation", stat.getOperation().getNum());
+		new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource()).update(query, namedParams);
 	}
 
 }
