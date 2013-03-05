@@ -2,6 +2,8 @@ package com.excilys.dao;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
 
@@ -11,17 +13,11 @@ public interface ComputerDAO {
 	
 	Computer getComputer(int id);
 	
-	int getComputersCount();
-	
 	List<Computer> getComputers();
 	
-	List<Computer> getComputers(int page, ComputerColumnSorter sorter);
+	Page<Computer> getComputers(int page, ComputerColumnSorter sorter);
 	
-	int getComputersCount(String filtre);
-	
-	List<Computer> getComputers(String filtre, ComputerColumnSorter sorter);
-	
-	List<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
+	Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter);
 	
 	boolean saveOrUpdate(Computer computer);
 	

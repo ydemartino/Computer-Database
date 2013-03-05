@@ -2,29 +2,28 @@ package com.excilys.dao;
 
 import java.util.List;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.model.Company;
+import com.excilys.repositories.CompanyRepository;
 
 @Repository
 public class DBCompanyDAO implements CompanyDAO {
 
 	@Autowired
-	private SessionFactory sessionFactory;
-
+	private CompanyRepository repo;
+	
 	@Override
 	public Company getCompany(int id) {
-		return (Company)sessionFactory.getCurrentSession().get(Company.class, id);
+		return repo.findOne(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Company> getCompanies() {
-		return sessionFactory.getCurrentSession().createCriteria(Company.class)
-				.addOrder(Order.asc("name")).list();
+		Sort sort = new Sort(Sort.Direction.ASC, "name");
+		return repo.findAll(sort);
 	}
 
 }

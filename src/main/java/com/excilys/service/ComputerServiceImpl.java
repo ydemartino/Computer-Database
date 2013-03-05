@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import com.excilys.model.ResultComputer;
 import com.excilys.model.Statistic;
 
 @Service
+@Transactional(readOnly = true)
 public class ComputerServiceImpl implements ComputerService {
 	
 	@Autowired
@@ -27,13 +29,11 @@ public class ComputerServiceImpl implements ComputerService {
 	private StatisticDAO statisticDAO;
 	
 	@Override
-	@Transactional(readOnly = true)
 	public Company getCompany(int id) {
 		return companyDAO.getCompany(id);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public List<Company> getCompanies() {
 		return companyDAO.getCompanies();
 	}
@@ -45,19 +45,15 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ResultComputer getComputers(int page, ComputerColumnSorter sorter) {
-		List<Computer> computers = computerDAO.getComputers(page, sorter);
-		int total = computerDAO.getComputersCount();
-		return new ResultComputer(computers, total);
+		Page<Computer> computers = computerDAO.getComputers(page, sorter);
+		return new ResultComputer(computers.getContent(), (int)computers.getTotalElements());
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ResultComputer getComputers(String filtre, int page, ComputerColumnSorter sorter) {
-		List<Computer> computers = computerDAO.getComputers(filtre, page, sorter);
-		int total = computerDAO.getComputersCount(filtre); 
-		return new ResultComputer(computers, total);
+		Page<Computer> computers = computerDAO.getComputers(filtre, page, sorter); 
+		return new ResultComputer(computers.getContent(), (int)computers.getTotalElements());
 	}
 
 	@Override
@@ -83,5 +79,4 @@ public class ComputerServiceImpl implements ComputerService {
 		stat.setOperation(Statistic.DBOperation.DELETE);
 		statisticDAO.save(stat);
 	}
-
 }

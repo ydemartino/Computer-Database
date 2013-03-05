@@ -2,7 +2,7 @@ package com.excilys.model;
 
 public class ComputerColumnSorter {
 	
-	private static final String[] indexes = { "", "c.name", "introduced", "discontinued", "cy.name" } ;
+	private static final String[] indexes = { "", "name", "introduced", "discontinued", "cy.name" } ;
 	
 	private int sort;
 	
