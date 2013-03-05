@@ -1,8 +1,22 @@
 package com.excilys.model;
 
-public class Company {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "COMPANY")
+public class Company {
+	
+	@Id
+	@SequenceGenerator(name = "sequence", sequenceName = "COMPANY_SEQ")   
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")  
 	private int id;
+	@Column(nullable = false)
 	private String name;
 
 	public int getId() {

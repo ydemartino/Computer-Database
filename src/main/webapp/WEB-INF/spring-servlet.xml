@@ -24,9 +24,24 @@
 		<property name="statementsCacheSize" value="100" />
 		<property name="releaseHelperThreads" value="3" />
 	</bean>
-	
-	<bean id="computerJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<constructor-arg ref="computerDataSource"/>
+
+	<bean id="computerSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="computerDataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.excilys.model.Company</value>
+				<value>com.excilys.model.Computer</value>
+				<value>com.excilys.model.Statistic</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
 	</bean>
 
 	<context:annotation-config />
@@ -42,8 +57,8 @@
 	</bean>
 
 	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="computerDataSource" />
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="computerSessionFactory" />
 	</bean>
 
 	<tx:annotation-driven transaction-manager="transactionManager" />

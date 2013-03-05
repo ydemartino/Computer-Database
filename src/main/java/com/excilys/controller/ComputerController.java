@@ -30,8 +30,8 @@ public class ComputerController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			@RequestParam(value = "filter", required = false) String filter,
-			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "sort", required = false, defaultValue = "1") Integer sort,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "sort", required = false, defaultValue = "1") int sort,
 			Model model) {
 		ComputerColumnSorter sorter = new ComputerColumnSorter(sort);
 		model.addAttribute("sorter", sorter);

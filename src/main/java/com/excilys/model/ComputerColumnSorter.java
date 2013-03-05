@@ -34,5 +34,9 @@ public class ComputerColumnSorter {
 	public String getOrderBy() {
 		return sort < 0 ? "DESC" : "ASC";
 	}
+	
+	public boolean isAsc() {
+		return sort >= 0;
+	}
 
 }

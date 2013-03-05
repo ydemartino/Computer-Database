@@ -16,6 +16,9 @@
 	href="<c:url value="/css/main.css"/>">
 </head>
 <c:if test="${!empty param.filter}">
+	<c:set var="extraParamFilter" value="&filter=${param.filter}" />
+</c:if>
+<c:if test="${!empty param.filter}">
 	<c:set var="extraParam" value="&filter=${param.filter}" />
 </c:if>
 <c:if test="${!empty param.sort}">
@@ -55,17 +58,17 @@
 				<tr>
 					<th
 						class="col2 header<c:if test="${sorter.isCurrent(1)}"> headerSort<c:choose><c:when test="${sorter.isReverse(1)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(1)}${extraParam}"/>">Computer
+						href="<c:url value="computers.do?sort=${sorter.getSort(1)}${extraParamFilter}"/>">Computer
 							name</a></th>
 					<th
 						class="col3 header<c:if test="${sorter.isCurrent(2)}"> headerSort<c:choose><c:when test="${sorter.isReverse(2)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(2)}${extraParam}"/>">Introduced</a></th>
+						href="<c:url value="computers.do?sort=${sorter.getSort(2)}${extraParamFilter}"/>">Introduced</a></th>
 					<th
 						class="col4 header<c:if test="${sorter.isCurrent(3)}"> headerSort<c:choose><c:when test="${sorter.isReverse(3)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(3)}${extraParam}"/>">Discontinued</a></th>
+						href="<c:url value="computers.do?sort=${sorter.getSort(3)}${extraParamFilter}"/>">Discontinued</a></th>
 					<th
 						class="col5 header<c:if test="${sorter.isCurrent(4)}"> headerSort<c:choose><c:when test="${sorter.isReverse(4)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(4)}${extraParam}"/>">Company</a></th>
+						href="<c:url value="computers.do?sort=${sorter.getSort(4)}${extraParamFilter}"/>">Company</a></th>
 				</tr>
 			</thead>
 			<tbody>

@@ -72,7 +72,7 @@
 			<div class="actions">
 				<input type="submit" value="<c:choose><c:when test="${isEdit}">Save this computer</c:when><c:otherwise>Create this computer</c:otherwise></c:choose>"
 					class="btn primary"> or <a
-					href="<c:url value="ComputerServlet"/>" class="btn">Cancel</a>
+					href="<c:url value="/computers.do"/>" class="btn">Cancel</a>
 			</div>
 		</form>
 

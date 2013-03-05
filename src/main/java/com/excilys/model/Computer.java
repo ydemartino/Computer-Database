@@ -2,12 +2,35 @@ package com.excilys.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table(name = "COMPUTER")
 public class Computer {
 
+	
+	@Id
+	@SequenceGenerator(name = "sequence", sequenceName = "COMPUTER_SEQ")   
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")  
 	private int id;
+	@Column(nullable = false)
 	private String name;
+	@Temporal(TemporalType.DATE)
 	private Date introduced;
+	@Temporal(TemporalType.DATE)
 	private Date discontinued;
+	@ManyToOne
+	@JoinColumn(name = "COMPANY_ID", nullable = true)
 	private Company company;
 
 	public int getId() {
