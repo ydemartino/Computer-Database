@@ -13,21 +13,28 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "COMPUTER")
 public class Computer {
 
-	
 	@Id
 	@SequenceGenerator(name = "sequence", sequenceName = "COMPUTER_SEQ")   
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")  
 	private int id;
+	@NotNull
+	@NotEmpty
 	@Column(nullable = false)
 	private String name;
 	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date introduced;
 	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date discontinued;
 	@ManyToOne
 	@JoinColumn(name = "COMPANY_ID", nullable = true)

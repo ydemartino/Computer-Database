@@ -3,10 +3,15 @@ package com.excilys.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.dao.ComputerDAO;
 import com.excilys.model.Company;
+import com.excilys.model.CompanyEditor;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
 import com.excilys.model.ResultComputer;
 import com.excilys.service.ComputerService;
-import com.excilys.validator.ComputerValidator;
 
 @Controller
 @RequestMapping("/computers")
@@ -50,52 +55,58 @@ public class ComputerController {
 		return "listComputers";
 	}
 
-	@RequestMapping(value = "/new")
-	public String add(@RequestParam(value="name", required=false) String name,
-			@RequestParam(value="introduced", required=false) String introduced,
-			@RequestParam(value="discontinued", required=false) String discontinued,
-			@RequestParam(value="company", required=false) Integer companyId, Model model,
-			HttpServletRequest request) {
-		if (request.getMethod().equals("POST")) {
-			ComputerValidator validator = new ComputerValidator(null, name,
-					introduced, discontinued, companyId, service);
-			
-			if (validator.isValid()) { 
-				Computer c = validator.getComputer();
-				service.saveOrUpdate(c, request.getRemoteAddr());
-				return String.format("redirect:/computers.do?added=%s", c.getName());
-			} 
-			model.addAttribute("validator", validator); 
-		}
-		 
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String add(@ModelAttribute("computer") Computer computer, Model model) {
 		List<Company> companies = service.getCompanies();
 		model.addAttribute("companies", companies);
 		model.addAttribute("action", "/computers/new.do");
 		return "formComputer";
 	}
 
-	@RequestMapping(value = "/{id}")
-	public String edit(@PathVariable("id") Integer id,
-			@RequestParam(value="name", required=false) String name,
-			@RequestParam(value="introduced", required=false) String introduced,
-			@RequestParam(value="discontinued", required=false) String discontinued,
-			@RequestParam(value="company", required=false) Integer companyId, Model model,
-			HttpServletRequest request) {
-		if (request.getMethod().equals("POST")) {
-			ComputerValidator validator = new ComputerValidator(id, name,
-					introduced, discontinued, companyId, service);
-			
-			if (validator.isValid()) { 
-				Computer c = validator.getComputer();
-				service.saveOrUpdate(c, request.getRemoteAddr());
-				return String.format("redirect:/computers.do?edited=%s", c.getName());
-			} 
-			model.addAttribute("validator", validator); 
-		} else {
-			Computer computer = service.getComputer(id);
-			request.setAttribute("computer", computer);
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public String addPost(@Valid @ModelAttribute("computer") Computer computer, BindingResult result, 
+			Model model, HttpServletRequest request) {
+		if (!result.hasErrors()) {
+			service.saveOrUpdate(computer, request.getRemoteAddr());
+			return String.format("redirect:/computers.do?added=%s", computer.getName());
 		}
+		
+		model.addAttribute("result", result);
+		
+		List<Company> companies = service.getCompanies();
+		model.addAttribute("companies", companies);
+		model.addAttribute("action", "/computers/new.do");
+		return "formComputer";
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String edit(@PathVariable("id") Integer id,
+			Model model, HttpServletRequest request) {
+		
+		Computer computer = service.getComputer(id);
+		request.setAttribute("computer", computer);
 	    
+		request.setAttribute("isEdit", true);
+		request.setAttribute("action", String.format("/computers/%d.do", id));
+		List<Company> companies = service.getCompanies();
+		request.setAttribute("companies", companies);
+		model.addAttribute("id", id);
+
+		return "formComputer";
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
+	public String edit2(@PathVariable("id") Integer id,
+			@Valid @ModelAttribute("computer") Computer computer,
+			BindingResult result, 
+			Model model, HttpServletRequest request) {
+		if (!result.hasErrors()) {
+				service.saveOrUpdate(computer, request.getRemoteAddr());
+				return String.format("redirect:/computers.do?edited=%s", computer.getName());
+		}
+
+		model.addAttribute("result", result);
+		
 		request.setAttribute("isEdit", true);
 		request.setAttribute("action", String.format("/computers/%d.do", id));
 		List<Company> companies = service.getCompanies();
@@ -110,5 +121,10 @@ public class ComputerController {
 			HttpServletRequest request) {
 		service.deleteComputer(id, request.getRemoteAddr());
 		return "redirect:/computers.do";
+	}
+	
+	@InitBinder
+	public void initBinderUser(WebDataBinder binder) {
+		binder.registerCustomEditor(Company.class, new CompanyEditor(service));
 	}
 }
