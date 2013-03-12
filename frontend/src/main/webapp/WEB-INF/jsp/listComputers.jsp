@@ -35,9 +35,9 @@
 	<section id="main">
 		<h1>${total} computers found</h1>
     
-    	<c:if test="${!empty param.added || !empty param.edited}">
+    	<c:if test="${!empty action}">
         <div class="alert-message warning">
-            <strong>Done!</strong> Computer ${param.added}${param.edited} has been <c:out value="${!empty param.added ? 'created' : 'updated' }" />
+            <strong>Done!</strong> Computer ${computer} has been ${action}
         </div>
         </c:if>
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.excilys.dao.ComputerDAO;
 import com.excilys.model.Company;
@@ -65,10 +66,12 @@ public class ComputerController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public String addPost(@Valid @ModelAttribute("computer") Computer computer, BindingResult result, 
-			Model model, HttpServletRequest request) {
+			Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		if (!result.hasErrors()) {
 			service.saveOrUpdate(computer, request.getRemoteAddr());
-			return String.format("redirect:/computers.do?added=%s", computer.getName());
+			redirectAttributes.addFlashAttribute("computer", computer.getName());
+			redirectAttributes.addFlashAttribute("action", "added");
+			return "redirect:/computers.do";
 		}
 		
 		model.addAttribute("result", result);
@@ -98,11 +101,13 @@ public class ComputerController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public String edit2(@PathVariable("id") Integer id,
 			@Valid @ModelAttribute("computer") Computer computer,
-			BindingResult result, 
+			BindingResult result, RedirectAttributes redirectAttributes,
 			Model model, HttpServletRequest request) {
 		if (!result.hasErrors()) {
-				service.saveOrUpdate(computer, request.getRemoteAddr());
-				return String.format("redirect:/computers.do?edited=%s", computer.getName());
+			service.saveOrUpdate(computer, request.getRemoteAddr());
+			redirectAttributes.addFlashAttribute("computer", computer.getName());
+			redirectAttributes.addFlashAttribute("action", "edited");
+			return "redirect:/computers.do";
 		}
 
 		model.addAttribute("result", result);
@@ -118,8 +123,13 @@ public class ComputerController {
 
 	@RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
 	public String delete(@PathVariable Integer id, Model model,
-			HttpServletRequest request) {
-		service.deleteComputer(id, request.getRemoteAddr());
+			HttpServletRequest request, RedirectAttributes redirectAttributes) {
+		Computer c = service.getComputer(id);
+		if (c != null) {
+			redirectAttributes.addFlashAttribute("computer", c.getName());
+			redirectAttributes.addFlashAttribute("action", "deleted");
+			service.deleteComputer(id, request.getRemoteAddr());
+		}
 		return "redirect:/computers.do";
 	}
 	
