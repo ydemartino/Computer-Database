@@ -4,7 +4,7 @@
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.model.Computer"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,15 +78,13 @@
 						<td><c:choose>
 									<c:when test="${empty c.introduced}"><em>-</em></c:when>
 									<c:otherwise>
-										<fmt:formatDate type="date" dateStyle="medium"
-											value="${c.introduced}" />
+										<joda:format value="${c.introduced}" style="M-" />
 									</c:otherwise>
 								</c:choose></td>
 						<td><c:choose>
 									<c:when test="${empty c.discontinued}"><em>-</em></c:when>
 									<c:otherwise>
-										<fmt:formatDate type="date" dateStyle="medium"
-											value="${c.discontinued}" />
+										<joda:format value="${c.discontinued}" style="M-" />
 									</c:otherwise>
 								</c:choose></td>
 						<td><c:choose>
