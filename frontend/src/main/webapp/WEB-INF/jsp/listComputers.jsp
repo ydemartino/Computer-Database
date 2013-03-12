@@ -33,7 +33,7 @@
 	</header>
 
 	<section id="main">
-		<h1>${total} computers found</h1>
+		<h1>${pager.totalElements} computers found</h1>
 
 		<c:if test="${!empty action}">
 			<div class="alert-message warning">
