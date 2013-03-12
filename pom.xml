@@ -10,6 +10,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>3.2.1.RELEASE</org.springframework.version>
 		<org.hibernate.version>4.1.9.Final</org.hibernate.version>
+		<org.slf4j.version>1.6.4</org.slf4j.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -36,12 +37,17 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.6.4</version>
+				<version>${org.slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-simple</artifactId>
-				<version>1.6.4</version>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${org.slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.0.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.h2database</groupId>
@@ -57,6 +63,12 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
 				<version>${org.springframework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
