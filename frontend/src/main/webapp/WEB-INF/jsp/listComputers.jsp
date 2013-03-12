@@ -4,7 +4,8 @@
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.model.Computer"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tag"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,24 +23,23 @@
 	<c:set var="extraParam" value="&filter=${param.filter}" />
 </c:if>
 <c:if test="${!empty param.sort}">
-	<c:set var="extraParam" value="&sort=${param.sort}" />
+	<c:set var="extraParam" value="${extraParam}&sort=${param.sort}" />
 </c:if>
 <body>
 	<header class="topbar">
 		<h1 class="fill">
-			<a href="<c:url value="computers.do"/>">Computer database
-				&mdash;</a>
+			<a href="<c:url value="computers.do"/>">Computer database &mdash;</a>
 		</h1>
 	</header>
 
 	<section id="main">
 		<h1>${total} computers found</h1>
-    
-    	<c:if test="${!empty action}">
-        <div class="alert-message warning">
-            <strong>Done!</strong> Computer ${computer} has been ${action}
-        </div>
-        </c:if>
+
+		<c:if test="${!empty action}">
+			<div class="alert-message warning">
+				<strong>Done!</strong> Computer ${computer} has been ${action}
+			</div>
+		</c:if>
 
 		<div id="actions">
 			<form action="<c:url value="computers.do"/>" method="GET">
@@ -56,57 +56,49 @@
 		<table class="computers zebra-striped">
 			<thead>
 				<tr>
-					<th
-						class="col2 header<c:if test="${sorter.isCurrent(1)}"> headerSort<c:choose><c:when test="${sorter.isReverse(1)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(1)}${extraParamFilter}"/>">Computer
-							name</a></th>
-					<th
-						class="col3 header<c:if test="${sorter.isCurrent(2)}"> headerSort<c:choose><c:when test="${sorter.isReverse(2)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(2)}${extraParamFilter}"/>">Introduced</a></th>
-					<th
-						class="col4 header<c:if test="${sorter.isCurrent(3)}"> headerSort<c:choose><c:when test="${sorter.isReverse(3)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(3)}${extraParamFilter}"/>">Discontinued</a></th>
-					<th
-						class="col5 header<c:if test="${sorter.isCurrent(4)}"> headerSort<c:choose><c:when test="${sorter.isReverse(4)}">Down</c:when><c:otherwise>Up</c:otherwise></c:choose></c:if>"><a
-						href="<c:url value="computers.do?sort=${sorter.getSort(4)}${extraParamFilter}"/>">Company</a></th>
+					<tag:thSorted thLabel="Computer name" colId="1"
+						extraParamFilter="${extraParamFilter}" sorter="${sorter}" />
+					<tag:thSorted thLabel="Introduced" colId="2"
+						extraParamFilter="${extraParamFilter}" sorter="${sorter}" />
+					<tag:thSorted thLabel="Discontinued" colId="3"
+						extraParamFilter="${extraParamFilter}" sorter="${sorter}" />
+					<tag:thSorted thLabel="Company" colId="4"
+						extraParamFilter="${extraParamFilter}" sorter="${sorter}" />
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="c" items="${computers}">
+				<c:forEach var="c" items="${pager.content}">
 					<tr>
 						<td><a href="<c:url value="/computers/${c.id}.do"/>">${c.name}</a></td>
 						<td><c:choose>
-									<c:when test="${empty c.introduced}"><em>-</em></c:when>
-									<c:otherwise>
-										<joda:format value="${c.introduced}" style="M-" />
-									</c:otherwise>
-								</c:choose></td>
+								<c:when test="${empty c.introduced}">
+									<em>-</em>
+								</c:when>
+								<c:otherwise>
+									<joda:format value="${c.introduced}" style="M-" />
+								</c:otherwise>
+							</c:choose></td>
 						<td><c:choose>
-									<c:when test="${empty c.discontinued}"><em>-</em></c:when>
-									<c:otherwise>
-										<joda:format value="${c.discontinued}" style="M-" />
-									</c:otherwise>
-								</c:choose></td>
+								<c:when test="${empty c.discontinued}">
+									<em>-</em>
+								</c:when>
+								<c:otherwise>
+									<joda:format value="${c.discontinued}" style="M-" />
+								</c:otherwise>
+							</c:choose></td>
 						<td><c:choose>
-									<c:when test="${empty c.company}"><em>-</em></c:when>
-									<c:otherwise>${c.company.name}</c:otherwise>
-								</c:choose></td>
+								<c:when test="${empty c.company}">
+									<em>-</em>
+								</c:when>
+								<c:otherwise>${c.company.name}</c:otherwise>
+							</c:choose></td>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 
 		<div id="pagination" class="pagination">
-			<ul>
-				<li class="prev<c:out value="${page <= 0 ? ' disabled' : '' }"/>"><a
-					<c:if test="${page > 0}"> href="computers.do?page=${page - 1}${extraParam}"</c:if>>&larr;
-						Previous</a></li>
-				<li class="current"><a>Displaying ${page * nbPerPage + 1}
-						to ${numMax} of ${total} </a></li>
-				<li class="next<c:out value="${(page + 1) * nbPerPage > total ? ' disabled' : ''}"/>"><a
-					<c:if test="${(page + 1) * nbPerPage < total}"> href="computers.do?page=${page + 1}${extraParam}"</c:if>>Next
-						&rarr;</a></li>
-			</ul>
+			<tag:paginate pager="${pager}" extraParam="${extraParam}"/>
 		</div>
 	</section>
 </body>

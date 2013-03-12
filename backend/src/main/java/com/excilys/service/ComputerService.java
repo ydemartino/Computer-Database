@@ -2,12 +2,12 @@ package com.excilys.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
-import com.excilys.model.ResultComputer;
 
 @Service
 public interface ComputerService {
@@ -18,9 +18,9 @@ public interface ComputerService {
 	
 	Computer getComputer(int id);
 	
-	ResultComputer getComputers(int page, ComputerColumnSorter sorter);
+	Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int nbPerPage);
 	
-	ResultComputer getComputers(String filtre, int page, ComputerColumnSorter sorter);
+	Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter, int nbPerPage);
 	
 	void saveOrUpdate(Computer computer, String ipAddress);
 	

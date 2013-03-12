@@ -14,7 +14,6 @@ import com.excilys.dao.StatisticDAO;
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
-import com.excilys.model.ResultComputer;
 import com.excilys.model.Statistic;
 
 @Service
@@ -45,15 +44,13 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	public ResultComputer getComputers(int page, ComputerColumnSorter sorter) {
-		Page<Computer> computers = computerDAO.getComputers(page, sorter);
-		return new ResultComputer(computers.getContent(), (int)computers.getTotalElements());
+	public Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int nbPerPage) {
+		return computerDAO.getComputers(page, sorter, nbPerPage);
 	}
 
 	@Override
-	public ResultComputer getComputers(String filtre, int page, ComputerColumnSorter sorter) {
-		Page<Computer> computers = computerDAO.getComputers(filtre, page, sorter); 
-		return new ResultComputer(computers.getContent(), (int)computers.getTotalElements());
+	public Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter, int nbPerPage) {
+		return computerDAO.getComputers(filtre, page, sorter, nbPerPage); 
 	}
 
 	@Override

@@ -20,10 +20,8 @@ public class DBComputerDAO implements ComputerDAO {
 	private ComputerRepository repo;
 
 	private Sort getSort(ComputerColumnSorter sorter) {
-		return new Sort(sorter.isAsc() 
-				? Sort.Direction.ASC
-				: Sort.Direction.DESC,
-				 sorter.getColumnName());
+		return new Sort(sorter.isAsc() ? Sort.Direction.ASC
+				: Sort.Direction.DESC, sorter.getColumnName());
 	}
 
 	@Override
@@ -37,15 +35,16 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public Page<Computer> getComputers(int page, ComputerColumnSorter sorter) {
-		Pageable pageable = new PageRequest(page, NB_PER_PAGE, getSort(sorter));
+	public Page<Computer> getComputers(int page, ComputerColumnSorter sorter,
+			int nbPerPage) {
+		Pageable pageable = new PageRequest(page, nbPerPage, getSort(sorter));
 		return repo.findAll(pageable);
 	}
 
 	@Override
 	public Page<Computer> getComputers(String filtre, int page,
-			ComputerColumnSorter sorter) {
-		Pageable pageable = new PageRequest(page, NB_PER_PAGE, getSort(sorter));
+			ComputerColumnSorter sorter, int nbPerPage) {
+		Pageable pageable = new PageRequest(page, nbPerPage, getSort(sorter));
 		return repo.findAllByNameContainingIgnoreCase(filtre, pageable);
 	}
 
