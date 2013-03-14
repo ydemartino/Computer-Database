@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.excilys.dao.CompanyDAO;
 import com.excilys.dao.ComputerDAO;
@@ -29,7 +30,10 @@ public class ComputerServiceImpl implements ComputerService {
 	
 	@Override
 	public Company getCompany(int id) {
-		return companyDAO.getCompany(id);
+		Assert.isTrue(id > 0);
+		Company c = companyDAO.getCompany(id);
+		Assert.notNull(c);
+		return c;
 	}
 
 	@Override
@@ -40,7 +44,10 @@ public class ComputerServiceImpl implements ComputerService {
 	@Override
 	@Transactional(readOnly = true)
 	public Computer getComputer(int id) {
-		return computerDAO.getComputer(id);
+		Assert.isTrue(id > 0);
+		Computer c = computerDAO.getComputer(id);
+		Assert.notNull(c);
+		return c;
 	}
 
 	@Override
@@ -56,6 +63,8 @@ public class ComputerServiceImpl implements ComputerService {
 	@Override
 	@Transactional
 	public void saveOrUpdate(Computer computer, String ipAddress) {
+		Assert.notNull(computer);
+		Assert.notNull(computer.getName());
 		boolean inserted = computerDAO.saveOrUpdate(computer);
 		Statistic stat = new Statistic();
 		stat.setComputerId(computer.getId());
@@ -68,6 +77,7 @@ public class ComputerServiceImpl implements ComputerService {
 	@Transactional
 	@Override
 	public void deleteComputer(int id, String ipAddress) {
+		Assert.isTrue(id > 0);
 		computerDAO.delete(id);
 		Statistic stat = new Statistic();
 		stat.setComputerId(id);
