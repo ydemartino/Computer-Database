@@ -54,6 +54,7 @@ public class DBComputerDAO implements ComputerDAO {
 	public Page<Computer> getComputers(String filtre, String companyFiltre, int page,
 			ComputerColumnSorter sorter, int nbPerPage) {
 		Pageable pageable = new PageRequest(page, nbPerPage, getSort(sorter));
+		
 		BooleanBuilder bb = new BooleanBuilder();
 		if (filtre != null) 
 			bb.and(QComputer.computer.name.containsIgnoreCase(filtre));
