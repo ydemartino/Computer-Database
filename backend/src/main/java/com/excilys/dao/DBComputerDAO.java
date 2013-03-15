@@ -2,6 +2,9 @@ package com.excilys.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +14,19 @@ import org.springframework.stereotype.Repository;
 
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
+import com.excilys.model.QComputer;
 import com.excilys.repositories.ComputerRepository;
+import com.mysema.query.BooleanBuilder;
+
 
 @Repository
 public class DBComputerDAO implements ComputerDAO {
 
 	@Autowired
 	private ComputerRepository repo;
+	
+	@PersistenceContext
+	private EntityManager em;
 
 	private Sort getSort(ComputerColumnSorter sorter) {
 		return new Sort(sorter.isAsc() ? Sort.Direction.ASC
@@ -42,10 +51,15 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public Page<Computer> getComputers(String filtre, int page,
+	public Page<Computer> getComputers(String filtre, String companyFiltre, int page,
 			ComputerColumnSorter sorter, int nbPerPage) {
 		Pageable pageable = new PageRequest(page, nbPerPage, getSort(sorter));
-		return repo.findAllByNameContainingIgnoreCase(filtre, pageable);
+		BooleanBuilder bb = new BooleanBuilder();
+		if (filtre != null) 
+			bb.and(QComputer.computer.name.containsIgnoreCase(filtre));
+		if (companyFiltre != null)
+			bb.and(QComputer.computer.company.name.containsIgnoreCase(companyFiltre));
+		return repo.findAll(bb, pageable);
 	}
 
 	@Override

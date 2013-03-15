@@ -15,7 +15,7 @@ public interface ComputerDAO {
 	
 	Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int NbPerPage);
 	
-	Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter, int NbPerPage);
+	Page<Computer> getComputers(String filtre, String companyFiltre, int page, ComputerColumnSorter sorter, int NbPerPage);
 	
 	boolean saveOrUpdate(Computer computer);
 	

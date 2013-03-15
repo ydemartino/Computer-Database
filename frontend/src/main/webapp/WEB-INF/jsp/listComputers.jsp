@@ -1,5 +1,3 @@
-<%-- <%@ page language="java" contentType="text/html; charset=UTF-8" --%>
-<%--     pageEncoding="UTF-8"%> --%>
 <%@page import="java.text.DateFormat"%>
 <%@page import="java.util.List"%>
 <%@page import="com.excilys.model.Computer"%>
@@ -19,8 +17,11 @@
 <c:if test="${!empty param.filter}">
 	<c:set var="extraParamFilter" value="&filter=${param.filter}" />
 </c:if>
-<c:if test="${!empty param.filter}">
-	<c:set var="extraParam" value="&filter=${param.filter}" />
+<c:if test="${!empty param.company}">
+	<c:set var="extraParamFilter" value="${extraParamFilter}&company=${param.company}" />
+</c:if>
+<c:if test="${!empty extraParamFilter}">
+	<c:set var="extraParam" value="${extraParamFilter}" />
 </c:if>
 <c:if test="${!empty param.sort}">
 	<c:set var="extraParam" value="${extraParam}&sort=${param.sort}" />
@@ -45,7 +46,9 @@
 			<form action="<c:url value="computers.do"/>" method="GET">
 				<input type="search" id="searchbox" name="filter"
 					value="${param.filter}" placeholder="Filter by computer name...">
-				<input type="submit" id="searchsubmit" value="Filter by name"
+				<input type="search" name="company"
+					value="${param.company}" placeholder="Filter by company name...">
+				<input type="submit" id="searchsubmit" value="Filter"
 					class="btn primary">
 			</form>
 

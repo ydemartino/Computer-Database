@@ -20,7 +20,7 @@ public interface ComputerService {
 	
 	Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int nbPerPage);
 	
-	Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter, int nbPerPage);
+	Page<Computer> getComputers(String filtre, String companyFiltre, int page, ComputerColumnSorter sorter, int nbPerPage);
 	
 	void saveOrUpdate(Computer computer, String ipAddress);
 	

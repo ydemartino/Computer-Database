@@ -11,6 +11,7 @@
 		<org.springframework.version>3.2.1.RELEASE</org.springframework.version>
 		<org.hibernate.version>4.1.9.Final</org.hibernate.version>
 		<org.slf4j.version>1.6.4</org.slf4j.version>
+		<org.querydsl.version>2.9.0</org.querydsl.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -102,6 +103,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-annotations</artifactId>
+				<version>3.5.6-Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>4.1.0.Final</version>
 			</dependency>
@@ -129,6 +135,21 @@
 				<groupId>org.jadira.usertype</groupId>
 				<artifactId>usertype.core</artifactId>
 				<version>3.1.0.CR1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mysema.querydsl</groupId>
+				<artifactId>querydsl-core</artifactId>
+				<version>${org.querydsl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mysema.querydsl</groupId>
+				<artifactId>querydsl-apt</artifactId>
+				<version>${org.querydsl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mysema.querydsl</groupId>
+				<artifactId>querydsl-jpa</artifactId>
+				<version>${org.querydsl.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

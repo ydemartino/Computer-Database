@@ -56,8 +56,8 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	public Page<Computer> getComputers(String filtre, int page, ComputerColumnSorter sorter, int nbPerPage) {
-		return computerDAO.getComputers(filtre, page, sorter, nbPerPage); 
+	public Page<Computer> getComputers(String filtre, String companyFiltre, int page, ComputerColumnSorter sorter, int nbPerPage) {
+		return computerDAO.getComputers(filtre, companyFiltre, page, sorter, nbPerPage); 
 	}
 
 	@Override

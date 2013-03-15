@@ -37,14 +37,15 @@ public class ComputerController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "company", required = false) String companyFilter,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "sort", required = false, defaultValue = "1") int sort,
 			Model model) {
 		ComputerColumnSorter sorter = new ComputerColumnSorter(sort);
 		model.addAttribute("sorter", sorter);
 
-		Page<Computer> pager = filter == null ? service.getComputers(page,
-				sorter, NB_PER_PAGE) : service.getComputers(filter, page,
+		Page<Computer> pager = filter == null && companyFilter == null ? service.getComputers(page,
+				sorter, NB_PER_PAGE) : service.getComputers(filter, companyFilter, page,
 				sorter, NB_PER_PAGE);
 
 		model.addAttribute("pager", pager);
