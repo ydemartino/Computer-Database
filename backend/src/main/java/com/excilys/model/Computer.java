@@ -2,6 +2,7 @@ package com.excilys.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,23 +24,23 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Computer {
 
 	@Id
-	@SequenceGenerator(name = "sequence", sequenceName = "COMPUTER_SEQ")   
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")  
+	@SequenceGenerator(name = "sequence", sequenceName = "COMPUTER_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
 	private int id;
 	@NotNull
 	@NotEmpty
 	@Column(nullable = false)
 	private String name;
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate introduced;
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate discontinued;
-	@ManyToOne
-	@JoinColumn(name = "COMPANY_ID", nullable = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "COMPANY_ID", referencedColumnName = "ID", nullable = true)
 	private Company company;
 
 	public int getId() {
@@ -89,6 +90,4 @@ public class Computer {
 				+ company + "]";
 	}
 
-	
-	
 }
