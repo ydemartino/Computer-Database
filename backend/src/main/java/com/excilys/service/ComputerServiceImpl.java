@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -51,13 +52,13 @@ public class ComputerServiceImpl implements ComputerService {
 	}
 
 	@Override
-	public Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int nbPerPage) {
-		return computerDAO.getComputers(page, sorter, nbPerPage);
+	public Page<Computer> getComputers(Pageable page, ComputerColumnSorter sorter) {
+		return computerDAO.getComputers(page, sorter);
 	}
 
 	@Override
-	public Page<Computer> getComputers(String filtre, String companyFiltre, int page, ComputerColumnSorter sorter, int nbPerPage) {
-		return computerDAO.getComputers(filtre, companyFiltre, page, sorter, nbPerPage); 
+	public Page<Computer> getComputers(String filtre, String companyFiltre, Pageable page, ComputerColumnSorter sorter) {
+		return computerDAO.getComputers(filtre, companyFiltre, page, sorter); 
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,10 +45,11 @@ public class ComputerController {
 			Model model) {
 		ComputerColumnSorter sorter = new ComputerColumnSorter(sort);
 		model.addAttribute("sorter", sorter);
+		Pageable pageable = new PageRequest(page, NB_PER_PAGE);
 
-		Page<Computer> pager = filter == null && companyFilter == null ? service.getComputers(page,
-				sorter, NB_PER_PAGE) : service.getComputers(filter, companyFilter, page,
-				sorter, NB_PER_PAGE);
+		Page<Computer> pager = filter == null && companyFilter == null ? service.getComputers(pageable,
+				sorter) : service.getComputers(filter, companyFilter, pageable,
+				sorter);
 
 		model.addAttribute("pager", pager);
 

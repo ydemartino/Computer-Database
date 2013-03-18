@@ -3,6 +3,7 @@ package com.excilys.dao;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
@@ -13,9 +14,9 @@ public interface ComputerDAO {
 	
 	List<Computer> getComputers();
 	
-	Page<Computer> getComputers(int page, ComputerColumnSorter sorter, int NbPerPage);
+	Page<Computer> getComputers(Pageable page, ComputerColumnSorter sorter);
 	
-	Page<Computer> getComputers(String filtre, String companyFiltre, int page, ComputerColumnSorter sorter, int NbPerPage);
+	Page<Computer> getComputers(String filtre, String companyFiltre, Pageable page, ComputerColumnSorter sorter);
 	
 	boolean saveOrUpdate(Computer computer);
 	

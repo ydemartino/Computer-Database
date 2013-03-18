@@ -8,9 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.model.Computer;
@@ -31,11 +29,6 @@ public class DBComputerDAO implements ComputerDAO {
 	@PersistenceContext
 	private EntityManager em;
 
-	private Sort getSort(ComputerColumnSorter sorter) {
-		return new Sort(sorter.isAsc() ? Sort.Direction.ASC
-				: Sort.Direction.DESC, sorter.getColumnName());
-	}
-
 	@Override
 	public Computer getComputer(int id) {
 		return repo.findOne(id);
@@ -47,15 +40,13 @@ public class DBComputerDAO implements ComputerDAO {
 	}
 
 	@Override
-	public Page<Computer> getComputers(int page, ComputerColumnSorter sorter,
-			int nbPerPage) {
-		return getComputers(null, null, page, sorter, nbPerPage);
+	public Page<Computer> getComputers(Pageable page, ComputerColumnSorter sorter) {
+		return getComputers(null, null, page, sorter);
 	}
 
 	@Override
-	public Page<Computer> getComputers(String filtre, String companyFiltre, int page,
-			ComputerColumnSorter sorter, int nbPerPage) {
-		Pageable pageable = new PageRequest(page, nbPerPage, getSort(sorter));
+	public Page<Computer> getComputers(String filtre, String companyFiltre, 
+			Pageable page, ComputerColumnSorter sorter) {
 		BooleanBuilder bb = new BooleanBuilder();
 		QComputer computer = QComputer.computer;
 		QCompany company = QCompany.company;
@@ -70,10 +61,10 @@ public class DBComputerDAO implements ComputerDAO {
 		long total = query.count();
 		query.fetch()
 			.orderBy(sorter.getOrderSpecifier())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize());
+			.offset(page.getOffset())
+			.limit(page.getPageSize());
 		List<Computer> computers = query.list(computer);
-		return new PageImpl<Computer>(computers, pageable, total);
+		return new PageImpl<Computer>(computers, page, total);
 	}
 
 	@Override
