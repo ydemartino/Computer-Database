@@ -6,7 +6,6 @@ import com.mysema.query.types.expr.ComparableExpressionBase;
 
 public class ComputerColumnSorter {
 	
-	private static final String[] indexes = { "", "name", "introduced", "discontinued", "company.name" } ;
 	private static final ComparableExpressionBase<?>[] QIndexes = { null, QComputer.computer.name, QComputer.computer.introduced,
 		QComputer.computer.discontinued, QCompany.company.name } ;
 	
@@ -14,7 +13,7 @@ public class ComputerColumnSorter {
 	
 	public ComputerColumnSorter(int sort) {
 		this.sort = sort;
-		if (indexes.length < Math.abs(sort) || Math.abs(sort) <= 0)
+		if (QIndexes.length < Math.abs(sort) || Math.abs(sort) <= 0)
 			this.sort = 1;
 	}
 	

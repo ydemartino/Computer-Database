@@ -14,6 +14,8 @@ public interface ComputerDAO {
 	
 	List<Computer> getComputers();
 	
+	List<Computer> getComputers(String filtre, String companyFiltre);
+	
 	Page<Computer> getComputers(Pageable page, ComputerColumnSorter sorter);
 	
 	Page<Computer> getComputers(String filtre, String companyFiltre, Pageable page, ComputerColumnSorter sorter);

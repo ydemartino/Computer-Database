@@ -1,5 +1,7 @@
 package com.excilys.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,8 +23,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "COMPUTER")
-public class Computer {
+public class Computer implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@SequenceGenerator(name = "sequence", sequenceName = "COMPUTER_SEQ")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")

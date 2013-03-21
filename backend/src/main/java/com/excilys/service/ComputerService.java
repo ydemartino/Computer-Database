@@ -4,13 +4,11 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import com.excilys.model.Company;
 import com.excilys.model.Computer;
 import com.excilys.model.ComputerColumnSorter;
 
-@Service
 public interface ComputerService {
 	
 	Company getCompany(int id);
@@ -18,6 +16,8 @@ public interface ComputerService {
 	List<Company> getCompanies();
 	
 	Computer getComputer(int id);
+	
+	List<Computer> getComputers(String filtre, String companyFiltre);
 	
 	Page<Computer> getComputers(Pageable page, ComputerColumnSorter sorter);
 	

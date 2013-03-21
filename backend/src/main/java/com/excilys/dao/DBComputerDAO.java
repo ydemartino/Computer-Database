@@ -33,6 +33,23 @@ public class DBComputerDAO implements ComputerDAO {
 	public Computer getComputer(int id) {
 		return repo.findOne(id);
 	}
+	
+	@Override
+	public List<Computer> getComputers(String filtre, String companyFiltre) {
+		BooleanBuilder bb = new BooleanBuilder();
+		QComputer computer = QComputer.computer;
+		QCompany company = QCompany.company;
+		if (filtre != null && filtre.length() > 0) 
+			bb.and(computer.name.containsIgnoreCase(filtre));
+		if (companyFiltre != null && companyFiltre.length() > 0)
+			bb.and(company.name.containsIgnoreCase(companyFiltre));
+		JPAQuery query = new JPAQuery(em)
+			.from(computer)
+			.leftJoin(computer.company, company)
+			.fetch()
+			.where(bb);
+		return query.list(computer);
+	}
 
 	@Override
 	public List<Computer> getComputers() {
