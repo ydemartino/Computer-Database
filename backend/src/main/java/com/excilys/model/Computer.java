@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -23,6 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "COMPUTER")
+@XmlRootElement(name = "computer")
 public class Computer implements Serializable {
 
 	private static final long serialVersionUID = 1L;
